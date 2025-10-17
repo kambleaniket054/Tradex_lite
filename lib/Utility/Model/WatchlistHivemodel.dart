@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 
-import '../script.dart';
+import 'script.dart';
 part 'WatchlistHivemodel.g.dart';
 @HiveType(typeId: 2)
 class WatchlistHiveModel extends HiveObject {

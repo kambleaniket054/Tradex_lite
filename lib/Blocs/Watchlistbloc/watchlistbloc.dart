@@ -10,7 +10,7 @@ import 'package:tradex_lite/View/watchlist.dart';
 
 import '../../Utility/Model/WatchlistHivemodel.dart';
 import '../../Utility/Sharedutility.dart';
-import '../../Utility/script.dart';
+import '../../Utility/Model/script.dart';
 import '../../Utility/websocket.dart';
 
 
@@ -25,15 +25,15 @@ class WatchlistBloc extends Bloc<WatchlistEvent, WatchlistState> {
     if (WatchlistBox.get("watchlist") == null) {
        initialScripts = {
         "Tech": [
-           Script(symbol: "INFY", exchange: "NSE", company: "Infosys", ltp: 1550.0,change: 0.0,close: 0.0),
-           Script(symbol: "TCS", exchange: "BSE", company: "Tata Consultancy", ltp: 3800.0,change: 0.0,close: 0.0),
+           Script(symbol: "INFY", exchange: "NSE", company: "Infosys", ltp: 1550.0,change: 0.0,close: 1600,open: 1550,low: 1000,high: 2000,prevltp: []),
+           Script(symbol: "TCS", exchange: "BSE", company: "Tata Consultancy", ltp: 3800.0,change: 0.0,close: 3300,open: 3800,low: 1000,high: 2000,prevltp: []),
         ],
         "Banking": [
-           Script(symbol: "HDFCBANK", exchange: "NSE", company: "HDFC Bank", ltp: 1520.0,change: 0.0,close: 0.0),
-           Script(symbol: "ICICIBANK", exchange: "BSE", company: "ICICI Bank", ltp: 980.0,change: 0.0,close: 0.0),
+           Script(symbol: "HDFCBANK", exchange: "NSE", company: "HDFC Bank", ltp: 1520.0,change: 0.0,close: 1420,open: 1520,low: 1000,high: 2000,prevltp: []),
+           Script(symbol: "ICICIBANK", exchange: "BSE", company: "ICICI Bank", ltp: 980.0,change: 0.0,close: 990,open: 980,low: 1000,high: 2000,prevltp: []),
         ],
         "Energy": [
-           Script(symbol: "RELIANCE", exchange: "NSE", company: "Reliance Industries", ltp: 2460.0,change: 0.0,close: 0.0),
+           Script(symbol: "RELIANCE", exchange: "NSE", company: "Reliance Industries", ltp: 2460.0,change: 0.0,close: 2420,open: 2460,low: 1000,high: 2000,prevltp: []),
         ],
       };
 
@@ -56,12 +56,13 @@ class WatchlistBloc extends Bloc<WatchlistEvent, WatchlistState> {
         for (var s in state.scripts[wl]!) {
           final newLtp = s.ltp + (random.nextBool() ? 5 : -5);
           final change = (newLtp - s.ltp)/100;
-          final close = s.ltp;
+          s.prevltp.add(s.ltp);
+          List list = s.prevltp;
           final fakeUpdate = {
             "symbol":s.symbol,
             "ltp": newLtp,
             "change":change,
-            "close":close
+            "Plist":list
           };
           _webSocketService.sendMessage(jsonEncode(fakeUpdate));
 
@@ -73,8 +74,9 @@ class WatchlistBloc extends Bloc<WatchlistEvent, WatchlistState> {
       final symbol = data["symbol"];
       final ltp = (data["ltp"] as num).toDouble();
       final change = data["change"] != null ? (data["change"] as num).toDouble() : 0.0;
-      final close =data["close"] != null ? (data["close"] as num).toDouble() : 0.0;
-      add(UpdateLtp(symbol, ltp, change,close));
+      // final close =data["close"] != null ? (data["close"] as num).toDouble() : 0.0;
+      final prevlist =data["Plist"] != null ? data["Plist"] : [];
+      add(UpdateLtp(symbol, ltp, change,prevlist));
     });
   }
 
@@ -88,7 +90,7 @@ class WatchlistBloc extends Bloc<WatchlistEvent, WatchlistState> {
     updatedScripts.forEach((wl, list) {
       updatedScripts[wl] = list.map((script) {
         if (script.symbol == event.symbol) {
-          return script.copyWith(ltp: event.ltp,change: event.change,close: event.close);
+          return script.copyWith(ltp: event.ltp,change: event.change,prevltp: event.prevlist as List<double>);
         }
         return script;
       }).toList();

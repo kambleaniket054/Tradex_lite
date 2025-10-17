@@ -9,7 +9,7 @@ import 'package:tradex_lite/Blocs/ThemeState.dart';
 import 'package:tradex_lite/Blocs/Watchlistbloc/watchlistbloc.dart';
 import 'package:tradex_lite/Blocs/biometricbloc/BiometricEvent.dart';
 import 'package:tradex_lite/Utility/BiometricUtility.dart';
-import 'package:tradex_lite/Utility/script.dart';
+import 'package:tradex_lite/Utility/Model/script.dart';
 import 'package:tradex_lite/View/watchlist.dart';
 
 import '../Blocs/Watchlistbloc/watchlist_state.dart';
@@ -21,7 +21,7 @@ showCustomInfoBottomSheet(BuildContext mcontext,Script scrip,int index){
   showModalBottomSheet(
       context: mcontext, builder: (context){
         List<double> prevltp = [];
-        prevltp.add(scrip.ltp);
+        prevltp = scrip.prevltp;
     return SafeArea(
       top: false,
       bottom: true,
@@ -33,6 +33,14 @@ showCustomInfoBottomSheet(BuildContext mcontext,Script scrip,int index){
             final currentScripts = state.scripts[currentWatchlist] ?? [];
             scrip = currentScripts[index];
             prevltp.add(scrip.ltp);
+            var currenytype = '₹';
+            currencystate currency = (context.read<Themebloc>().state as currentThemeState).currency != null ? (context.read<Themebloc>().state as currentThemeState).currency : currencystate.INR;
+            if(currency == currencystate.INR){
+              currenytype = '₹';
+            }
+            else{
+              currenytype = r'$';
+            }
             return Container(
                 margin: EdgeInsets.symmetric(horizontal: 12,vertical: 8),
                 padding: EdgeInsets.symmetric(horizontal: 12,vertical: 10),
@@ -53,6 +61,7 @@ showCustomInfoBottomSheet(BuildContext mcontext,Script scrip,int index){
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(scrip.symbol,style: Theme.of(context).textTheme.bodyLarge,),
+                                SizedBox(width: 14,),
                                 Text(scrip.exchange,style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey),),
                               ],
                             ),
@@ -62,11 +71,11 @@ showCustomInfoBottomSheet(BuildContext mcontext,Script scrip,int index){
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text(scrip.ltp.toString(),style: TextStyle(
+                            Text(currenytype+" "+scrip.ltp.toString(),style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: scrip.ltp > scrip.close ? Colors.green : Colors.red,
                             ),),
-                            Text(scrip.change.toString(),style: TextStyle(
+                            Text(scrip.change.toString()+" %",style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: scrip.ltp > scrip.close ? Colors.green : Colors.red,
                             ),)
@@ -82,15 +91,15 @@ showCustomInfoBottomSheet(BuildContext mcontext,Script scrip,int index){
                       children: [
                         Column(children: [
                           Text("Open"),
-                          Text(scrip.close.toString()),
+                          Text(scrip.open.toString()),
                         ],),
                         Column(children: [
                           Text("High"),
-                          Text(scrip.close.toString()),
+                          Text(scrip.high.toString()),
                         ],),
                         Column(children: [
                           Text("Low"),
-                          Text(scrip.close.toString()),
+                          Text(scrip.low.toString()),
                         ],),
                         Column(children: [
                           Text("Close"),

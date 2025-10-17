@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../Utility/script.dart';
+import '../../Utility/Model/script.dart';
 
 
 class WatchlistState extends Equatable {

@@ -9,7 +9,7 @@ import 'package:tradex_lite/Utility/Dialogutility.dart';
 import '../Blocs/Watchlistbloc/watchlist_event.dart';
 import '../Blocs/Watchlistbloc/watchlist_state.dart';
 import '../Blocs/Watchlistbloc/watchlistbloc.dart';
-import '../Utility/script.dart';
+import '../Utility/Model/script.dart';
 import '../Utility/websocket.dart';
 
 class watchlist extends StatefulWidget{

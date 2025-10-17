@@ -23,9 +23,9 @@ class UpdateLtp extends WatchlistEvent {
   final String symbol;
   final double ltp;
   final double change;
-  final double close;
-  const UpdateLtp(this.symbol, this.ltp,this.change,this.close);
+  final List<double> prevlist;
+  const UpdateLtp(this.symbol, this.ltp,this.change,this.prevlist);
 
   @override
-  List<Object?> get props => [symbol, ltp, change,close];
+  List<Object?> get props => [symbol, ltp, change,prevlist];
 }

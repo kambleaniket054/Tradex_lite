@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tradex_lite/Utility/script.dart';
+import 'package:tradex_lite/Utility/Model/script.dart';
 import 'package:tradex_lite/Utility/varUtility.dart';
 import 'package:tradex_lite/View/Login.dart';
 
