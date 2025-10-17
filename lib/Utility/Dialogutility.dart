@@ -261,6 +261,8 @@ ShowSettingbottomsheet(BuildContext mcontext){
             child: BlocBuilder<Themebloc,ThemeState>(
                 builder: (context,state) {
                   final sta = (state as currentThemeState).isdark;
+                  final currencysta = (state as currentThemeState).currency;
+                  final textStye = Theme.of(context).textTheme.bodyLarge;
                   return Container(
                       margin: EdgeInsets.symmetric(horizontal: 12,vertical: 8),
                       padding: EdgeInsets.symmetric(horizontal: 12,vertical: 10),
@@ -281,6 +283,7 @@ ShowSettingbottomsheet(BuildContext mcontext){
                            ],
                          ),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text("Currency Display",style: Theme.of(context).textTheme.bodyLarge,),
                               Row(
@@ -290,17 +293,24 @@ ShowSettingbottomsheet(BuildContext mcontext){
                                       context.read<Themebloc>().add(oncurrencychange(currency: currencystate.INR));
                                     },
                                     child: Container(
-                                        child: Text("INR",style: Theme.of(context).textTheme.bodyMedium,)),
+                                      decoration: BoxDecoration(
+                                        color: currencysta == currencystate.INR ? Theme.of(context).colorScheme.primary : Colors.transparent,
+                                      ),
+                                      padding: EdgeInsets.only(left: 16,right: 16,top: 8,bottom: 8),
+                                        child: Text("INR",style:sta == true ? textStye : Theme.of(context).textTheme.bodyMedium!.copyWith(color:currencysta == currencystate.INR ? Colors.white : Colors.black),)),
                                   ),
-
+                                  SizedBox(width: 16),
                                   InkWell(
                                     onTap: (){
                                       context.read<Themebloc>().add(oncurrencychange(currency: currencystate.USD));
                                     },
                                     child: Container(
-                                        child: Text("USD",style: Theme.of(context).textTheme.bodyMedium,)),
+                                      decoration: BoxDecoration(
+                                        color: currencysta == currencystate.USD ? Theme.of(context).colorScheme.primary : Colors.transparent,
+                                      ),
+                                        padding: EdgeInsets.only(left: 16,right: 16,top: 8,bottom: 8),
+                                        child: Text("USD",style: sta == true ? textStye : Theme.of(context).textTheme.bodyMedium!.copyWith(color:currencysta == currencystate.USD ? Colors.white : Colors.black),),),
                                   ),
-
                                 ],
                               )
                             ],

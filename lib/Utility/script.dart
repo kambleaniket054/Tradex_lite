@@ -1,14 +1,29 @@
 import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
 
-class Script extends Equatable {
+part "script.g.dart";
+
+@HiveType(typeId: 0)
+class Script extends HiveObject with EquatableMixin {
+  @HiveField(0)
   final String symbol;
+
+  @HiveField(1)
   final String exchange;
+
+  @HiveField(2)
   final String company;
+
+  @HiveField(3)
   final double ltp;
+
+  @HiveField(4)
   final double change;
+
+  @HiveField(5)
   final double close;
 
-  const Script({
+   Script({
     required this.symbol,
     required this.exchange,
     required this.company,

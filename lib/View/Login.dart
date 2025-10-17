@@ -16,6 +16,8 @@ class login extends StatefulWidget{
 }
 
 class loginState extends State<login>{
+  TextEditingController _conEmail =  TextEditingController();
+  TextEditingController _conPass =  TextEditingController();
 
   @override
   void initState() {
@@ -48,6 +50,7 @@ class loginState extends State<login>{
               Text("Login",style: Theme.of(context).textTheme.headlineLarge,),
               SizedBox(height: 27,),
               TextFormField(
+                controller: _conEmail,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
                 decoration: InputDecoration(
@@ -62,6 +65,7 @@ class loginState extends State<login>{
               ),
               SizedBox(height: 16,),
               TextFormField(
+                controller: _conPass,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
                 decoration: InputDecoration(
@@ -77,6 +81,9 @@ class loginState extends State<login>{
               SizedBox(height: 27,),
               InkWell(
                 onTap: () async {
+                  loginbox.put('LoginId',_conEmail.text);
+                  loginbox.put('password',_conPass.text);
+                  // loginbox.put('isbiometricset', isBiometricEnable)
                   bool isbioAvaliable = await Biometricutility().checkBiometrics();
                   if(isbioAvaliable){
                    return showSetBiometricBottomSheet(context);

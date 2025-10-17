@@ -1,5 +1,11 @@
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tradex_lite/Utility/script.dart';
 import 'package:tradex_lite/Utility/varUtility.dart';
+import 'package:tradex_lite/View/Login.dart';
+
+import 'Model/WatchlistHivemodel.dart';
 
 setsharedpref(String type, String lable,dynamic val){
   if(sharepref != null){
@@ -24,11 +30,38 @@ initSharepref() async {
   // }
 }
 
+initHive()async{
+ await Hive.initFlutter();
+ await createbox("login");
+ await createbox("watchlist");
+ getSaveddata();
+}
+
+createbox(String Boxname) async {
+    if (Boxname == 'login') {
+      loginbox = await Hive.openBox(Boxname);
+    }
+    else {
+      Hive.registerAdapter(ScriptAdapter());
+      Hive.registerAdapter(WatchlistHiveModelAdapter());
+      WatchlistBox = await Hive.openBox(Boxname);
+    }
+}
+
 getSaveddata(){
- if (sharepref != null) {
-  loginId = sharepref!.getString("loginId") ?? '1234';
-   isBiometricEnable = sharepref!.getBool("isBiometricEnable") ?? true;
- }
+  if(loginbox.get('LoginId') != null){
+    loginId = loginbox.get('LoginId');
+  }
+  if(loginbox.get('password') != null){
+    loginId = loginbox.get('password');
+  }
+  if(loginbox.get("isbiometricset") != null){
+    isBiometricEnable = loginbox.get("isbiometricset");
+  }
+ // if (sharepref != null) {
+ //  loginId = sharepref!.getString("loginId") ?? '1234';
+ //   isBiometricEnable = sharepref!.getBool("isBiometricEnable") ?? true;
+ // }
 }
 
 getsharedpref(String type, String lable){

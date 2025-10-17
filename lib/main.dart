@@ -13,7 +13,8 @@ import 'View/Login.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initSharepref();
+  // await initSharepref();
+  await initHive();
   runApp(const MyApp());
 }
 

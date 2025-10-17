@@ -4,8 +4,12 @@ import 'dart:math';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tradex_lite/Blocs/Watchlistbloc/watchlist_event.dart';
 import 'package:tradex_lite/Blocs/Watchlistbloc/watchlist_state.dart';
+import 'package:tradex_lite/Utility/varUtility.dart';
+import 'package:tradex_lite/View/watchlist.dart';
 
 
+import '../../Utility/Model/WatchlistHivemodel.dart';
+import '../../Utility/Sharedutility.dart';
 import '../../Utility/script.dart';
 import '../../Utility/websocket.dart';
 
@@ -17,20 +21,28 @@ class WatchlistBloc extends Bloc<WatchlistEvent, WatchlistState> {
   StreamSubscription? _socketSubscription;
 
   WatchlistBloc(this._webSocketService) : super(const WatchlistState()) {
-    // Initialize with some fake scripts
-    final Map<String, List<Script>> initialScripts = {
-      "Tech": [
-        const Script(symbol: "INFY", exchange: "NSE", company: "Infosys", ltp: 1550.0,change: 0.0,close: 0.0),
-        const Script(symbol: "TCS", exchange: "BSE", company: "Tata Consultancy", ltp: 3800.0,change: 0.0,close: 0.0),
-      ],
-      "Banking": [
-        const Script(symbol: "HDFCBANK", exchange: "NSE", company: "HDFC Bank", ltp: 1520.0,change: 0.0,close: 0.0),
-        const Script(symbol: "ICICIBANK", exchange: "BSE", company: "ICICI Bank", ltp: 980.0,change: 0.0,close: 0.0),
-      ],
-      "Energy": [
-        const Script(symbol: "RELIANCE", exchange: "NSE", company: "Reliance Industries", ltp: 2460.0,change: 0.0,close: 0.0),
-      ],
-    };
+    Map<String, List<Script>> initialScripts = Map();
+    if (WatchlistBox.get("watchlist") == null) {
+       initialScripts = {
+        "Tech": [
+           Script(symbol: "INFY", exchange: "NSE", company: "Infosys", ltp: 1550.0,change: 0.0,close: 0.0),
+           Script(symbol: "TCS", exchange: "BSE", company: "Tata Consultancy", ltp: 3800.0,change: 0.0,close: 0.0),
+        ],
+        "Banking": [
+           Script(symbol: "HDFCBANK", exchange: "NSE", company: "HDFC Bank", ltp: 1520.0,change: 0.0,close: 0.0),
+           Script(symbol: "ICICIBANK", exchange: "BSE", company: "ICICI Bank", ltp: 980.0,change: 0.0,close: 0.0),
+        ],
+        "Energy": [
+           Script(symbol: "RELIANCE", exchange: "NSE", company: "Reliance Industries", ltp: 2460.0,change: 0.0,close: 0.0),
+        ],
+      };
+
+      WatchlistBox.put("watchlist", WatchlistHiveModel(initialScripts));
+    }
+    else{
+      WatchlistHiveModel gethivedata = WatchlistBox.get("watchlist")!;
+      initialScripts = gethivedata.watchlists;
+    }
 
     on<LoadWatchlist>(_onLoadWatchlist);
     on<FilterWatchlist>(_onFilterWatchlist);
