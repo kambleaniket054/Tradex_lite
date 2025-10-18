@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:tradex_lite/Utility/Model/user.dart';
 import 'package:tradex_lite/Utility/varUtility.dart';
 
+import '../../Utility/loginutility.dart';
 import 'BiometricEvent.dart';
 import 'BiometricState.dart';
 
@@ -24,15 +26,18 @@ class Biometricbloc extends Bloc<BiomtricEvent, BiometricState>{
         ),
       );
      if(authenticated){
-       loginbox.put("isbiometricset", true);
+      final userlog = loginbox.get(loginId);
+      userlog?.isbiometricEnable = true;
+      userlog?.save();
+       // loginbox.put("isbiometricset", true);
        emit(currentauthState(authState: AuthState.autSucces));
      }
      else{
-       loginbox.put("isbiometricset", false);
+       loginbox.get(loginId)?.isbiometricEnable = false;
        emit(currentauthState(authState: AuthState.authFailed));
      }
    }  catch (e) {
-     loginbox.put("isbiometricset", false);
+     loginbox.get(loginId)?.isbiometricEnable = false;
      print(e.toString());// TODO
      emit(currentauthState(authState: AuthState.authFailed));
    }

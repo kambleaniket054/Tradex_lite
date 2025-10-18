@@ -6,8 +6,8 @@ import 'package:tradex_lite/Utility/apptheme.dart';
 import 'package:tradex_lite/Utility/varUtility.dart';
 import 'package:tradex_lite/View/watchlist.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'Blocs/themeEvent.dart';
+import 'Utility/Services/Notificationservices.dart';
 import 'Utility/Sharedutility.dart';
 import 'View/Login.dart';
 
@@ -15,15 +15,29 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await initSharepref();
   await initHive();
-  runApp(const MyApp());
+  await NotificationService().init();
+
+
+  runApp( MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+   MyApp({super.key});
+  bool isdark = false;
+  currencystate currency = currencystate.INR;
+  int refreshrate = 5;
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    if(preferdTheme.get('isdark') != null){
+      isdark = preferdTheme.get('isdark');
+    }
+    if(preferdTheme.get('currency') != null){
+      currency = preferdTheme.get('currency');
+    }
+    if(preferdTheme.get('refreshrate') != null){
+      refreshrate = preferdTheme.get('refreshrate');
+    }
     return BlocProvider<Themebloc>(
       child:  BlocBuilder<Themebloc,ThemeState>(
         builder: (context,state) {
@@ -35,7 +49,7 @@ class MyApp extends StatelessWidget {
             );
         }
       ),
-      create: (BuildContext context) => Themebloc(),
+      create: (BuildContext context) => Themebloc(isdark: isdark,currency: currency,refreshrate: refreshrate),
     );
   }
 }

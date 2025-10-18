@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 
 part "script.g.dart";
 
-@HiveType(typeId: 0)
+@HiveType(typeId: 1)
 class Script extends HiveObject with EquatableMixin {
   @HiveField(0)
   final String symbol;

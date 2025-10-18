@@ -14,16 +14,21 @@ class LoadWatchlist extends WatchlistEvent {
   @override
   List<Object?> get props => [tabIndex];
 }
- class FilterWatchlist extends WatchlistEvent{
+ class SearchWatchlistscrip extends WatchlistEvent{
   final String query;
-  const FilterWatchlist(this.query);
+  const SearchWatchlistscrip(this.query);
+ }
+
+ class filtterWatchlistscript extends WatchlistEvent{
+  final String sort;
+  const filtterWatchlistscript({this.sort = ''});
  }
 
 class UpdateLtp extends WatchlistEvent {
   final String symbol;
   final double ltp;
   final double change;
-  final List<double> prevlist;
+  final List? prevlist;
   const UpdateLtp(this.symbol, this.ltp,this.change,this.prevlist);
 
   @override

@@ -8,7 +8,7 @@ part of 'script.dart';
 
 class ScriptAdapter extends TypeAdapter<Script> {
   @override
-  final int typeId = 0;
+  final int typeId = 1;
 
   @override
   Script read(BinaryReader reader) {

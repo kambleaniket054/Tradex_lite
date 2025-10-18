@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tradex_lite/Blocs/Watchlistbloc/watchlist_event.dart';
 import 'package:tradex_lite/Blocs/Watchlistbloc/watchlist_state.dart';
@@ -9,9 +10,12 @@ import 'package:tradex_lite/View/watchlist.dart';
 
 
 import '../../Utility/Model/WatchlistHivemodel.dart';
+import '../../Utility/Services/Notificationservices.dart';
 import '../../Utility/Sharedutility.dart';
 import '../../Utility/Model/script.dart';
-import '../../Utility/websocket.dart';
+import '../../Utility/Services/websocket.dart';
+import '../ThemeBloc.dart';
+import '../ThemeState.dart';
 
 
 
@@ -20,7 +24,7 @@ class WatchlistBloc extends Bloc<WatchlistEvent, WatchlistState> {
   final WebSocketService _webSocketService;
   StreamSubscription? _socketSubscription;
 
-  WatchlistBloc(this._webSocketService) : super(const WatchlistState()) {
+  WatchlistBloc(this._webSocketService, BuildContext context) : super(const WatchlistState()) {
     Map<String, List<Script>> initialScripts = Map();
     if (WatchlistBox.get("watchlist") == null) {
        initialScripts = {
@@ -45,12 +49,14 @@ class WatchlistBloc extends Bloc<WatchlistEvent, WatchlistState> {
     }
 
     on<LoadWatchlist>(_onLoadWatchlist);
-    on<FilterWatchlist>(_onFilterWatchlist);
+    on<SearchWatchlistscrip>(_onsearchWatchlistscript);
     on<UpdateLtp>(_onUpdateLtp);
+    on<filtterWatchlistscript>(_onFilterScript);
 
     emit(state.copyWith(scripts: initialScripts));
 
-    _timer = Timer.periodic(const Duration(seconds: 2), (_) {
+    _timer = Timer.periodic(Duration(seconds:2), (time) {
+      print("second waited"+time.toString());
       final random = Random();
       for (var wl in state.scripts.keys) {
         for (var s in state.scripts[wl]!) {
@@ -77,6 +83,17 @@ class WatchlistBloc extends Bloc<WatchlistEvent, WatchlistState> {
       // final close =data["close"] != null ? (data["close"] as num).toDouble() : 0.0;
       final prevlist =data["Plist"] != null ? data["Plist"] : [];
       add(UpdateLtp(symbol, ltp, change,prevlist));
+      if(alerts.isNotEmpty){
+        for (var alert in alerts){
+          if(alert.Scriptname == symbol && alert.traget_price >= ltp){
+            alerts.remove(alert);
+            NotificationService.showNotification(
+              title: "Target Reached!",
+              body: "${alert.Scriptname} hit ₹${ alert.traget_price}",
+            );
+          }
+        }
+      }
     });
   }
 
@@ -90,7 +107,7 @@ class WatchlistBloc extends Bloc<WatchlistEvent, WatchlistState> {
     updatedScripts.forEach((wl, list) {
       updatedScripts[wl] = list.map((script) {
         if (script.symbol == event.symbol) {
-          return script.copyWith(ltp: event.ltp,change: event.change,prevltp: event.prevlist as List<double>);
+          return script.copyWith(ltp: event.ltp,change: event.change,);
         }
         return script;
       }).toList();
@@ -107,7 +124,11 @@ class WatchlistBloc extends Bloc<WatchlistEvent, WatchlistState> {
     return super.close();
   }
 
-  FutureOr<void> _onFilterWatchlist(FilterWatchlist event, Emitter<WatchlistState> emit) {
+  FutureOr<void> _onsearchWatchlistscript(SearchWatchlistscrip event, Emitter<WatchlistState> emit) {
     emit(state.copyWith(searchquary: event.query));
+  }
+
+  FutureOr<void> _onFilterScript(filtterWatchlistscript event, Emitter<WatchlistState> emit) {
+    emit(state.copyWith(sort: event.sort));
   }
 }

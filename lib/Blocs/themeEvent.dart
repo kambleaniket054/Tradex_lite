@@ -11,3 +11,8 @@ class oncurrencychange extends ThemeEvent{
   final currency;
   oncurrencychange({this.currency = currencystate.INR});
 }
+
+class onrefreshratechange extends ThemeEvent{
+ final int refreshrate;
+  onrefreshratechange({this.refreshrate = 5});
+}

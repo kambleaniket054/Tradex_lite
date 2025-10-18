@@ -10,13 +10,15 @@ import '../Blocs/Watchlistbloc/watchlist_event.dart';
 import '../Blocs/Watchlistbloc/watchlist_state.dart';
 import '../Blocs/Watchlistbloc/watchlistbloc.dart';
 import '../Utility/Model/script.dart';
-import '../Utility/websocket.dart';
+import '../Utility/Services/websocket.dart';
 
 class watchlist extends StatefulWidget{
   createState() => watchlistState();
 }
 
 class watchlistState extends State<watchlist>{
+
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     // TODO: implement initState
@@ -25,8 +27,9 @@ class watchlistState extends State<watchlist>{
   @override
   Widget build(BuildContext context) {
     return BlocProvider<WatchlistBloc>(
-      create: (context) => WatchlistBloc(WebSocketService()),
+      create: (context) => WatchlistBloc(WebSocketService(),context),
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Text("Watchlist"),
@@ -40,9 +43,9 @@ class watchlistState extends State<watchlist>{
         ),
         body: BlocBuilder<WatchlistBloc, WatchlistState>(
           //bloc: WatchlistBloc(WebSocketService()),
-          builder: (context, state) {
+          builder: (mcontext, state) {
            var currenytype = '₹';
-            currencystate currency = (context.read<Themebloc>().state as currentThemeState).currency != null ? (context.read<Themebloc>().state as currentThemeState).currency : currencystate.INR;
+            currencystate currency = (mcontext.read<Themebloc>().state as currentThemeState).currency != null ? (mcontext.read<Themebloc>().state as currentThemeState).currency : currencystate.INR;
             if(currency == currencystate.INR){
               currenytype = '₹';
             }
@@ -62,7 +65,15 @@ class watchlistState extends State<watchlist>{
             else{
               finalliststate = currentScripts;
             }
-
+            if(state.sort != ''){
+              switch(state.sort){
+                case 'Ascending':
+                  finalliststate.sort((a, b) => a.symbol.compareTo(b.symbol));
+                  break;
+                case 'Descending':
+                  finalliststate.sort((a, b) => b.symbol.compareTo(a.symbol));
+              }
+            }
             return Column(
               children: [
                 // Horizontal Tabs
@@ -79,7 +90,7 @@ class watchlistState extends State<watchlist>{
                         label: Text(state.watchlists[index]),
                         selected: isSelected,
                         onSelected: (_) {
-                          context.read<WatchlistBloc>().add(LoadWatchlist(index));
+                          mcontext.read<WatchlistBloc>().add(LoadWatchlist(index));
                         },
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
@@ -103,12 +114,15 @@ class watchlistState extends State<watchlist>{
                               ),
                             ),
                             onChanged: (val){
-                              context.read<WatchlistBloc>().add(FilterWatchlist(val));
+                              mcontext.read<WatchlistBloc>().add(SearchWatchlistscrip(val));
                             },
                           ),
                         ),
                       ),
-                      IconButton(onPressed: (){}, icon: Icon(Icons.filter_alt_rounded,size: 24,))
+                      IconButton(onPressed: (){
+                        WatchlistBloc inheritbloc = mcontext.read<WatchlistBloc>();
+                        showSortbottomsheet(mcontext,inheritbloc);
+                      }, icon: Icon(Icons.filter_alt_rounded,size: 24,))
                     ],
                   ),
                 ),

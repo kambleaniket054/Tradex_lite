@@ -1,16 +1,47 @@
-# tradex_lite
+#  TradeX Lite
 
-A new Flutter project.
+**TradeX Lite** 
+---
 
-## Getting Started
+#  Set Up
+ - Flutter SDK 3.29.2
+ - Android Studio
+ - An iOS simulator (requires a Mac) or an Android emulator.
 
-This project is a starting point for a Flutter application.
+# Installation
+ - clone repository
+   https://github.com/kambleaniket054/Tradex_lite
+   lates branch : TL_3.29.0
 
-A few resources to get you started if this is your first Flutter project:
+ - install dependency
+   flutter pub get
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+ - run the application
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+#  Features
+
+#  Authentication
+- Secure Login / Registration using Hive local database.
+- Supports Biometric Login (Fingerprint / Face ID).
+- Auto-login with saved credentials.
+
+#  Watchlist Screen
+- Displays user’s added scripts in a watchlist.
+- Search functionality with instant filtering.
+- Real-time LTP (Last Traded Price) updates.
+- Quick access to Script Detail Bottom Sheet.
+
+#  Script Detail Bottom Sheet
+- Detailed stock information with interactive line chart.
+- Ability to set price alerts for specific target levels.
+- Instant local notification when target price is reached.
+
+# ️ Settings Bottom Sheet
+- Toggle between Light / Dark theme.
+- Change Currency Type(₹ INR / $ USD).
+- Manage alert and notification preferences.
+
+---
+
+#  App Structure
+
